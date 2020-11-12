@@ -232,6 +232,8 @@
                                         noSQL(비관계형 DB)에서는 가능 주로 IoT사용.
 			{name : "남가인" , gender : "여자", age: 20}
 		];
+		
+```
 - 출력: member[0][name] => "김일국";
 - 출력: member[1][name] => "이병현";
 - 출력: member[2][name] => "남가인";
