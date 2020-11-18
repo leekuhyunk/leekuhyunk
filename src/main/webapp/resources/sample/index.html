@@ -11,6 +11,7 @@ span {
 display:block;height:10px;width:50px;background-color:red;
 margin-bottom:10px;
 }
+#wrap .slider img {widht:100%;}/* Cascade Style Sheet 특징 계단형 스타일지정 */
 /* 모바일용 스타일지정 끝 */
 </style>
 <script>
@@ -24,21 +25,27 @@ margin-bottom:10px;
 <header>
 <!-- 상단 로고와 햄버거 메뉴영역 시작 -->
 <h1>LOGO</h1><!-- 헤드라인 글자를 표시 h1~h6-->
-<!-- span태그 자리를 차지하지 않는 영역 = 한뼘, px 픽셀 화면에 표시되는 크기의 단위 -->
-<!--  :콜론(속성:값, Key:Value), ;세미콜론(문장의 끝) -->
 <span></span>
 <span></span>
 <span></span>
-HOME
-WE ARE
-WORK
-BLOG
-CONTACT US
+<!-- 리스트를 모여주는 태그 u1(UnOrdered List *.~, *.~ ) , o1(Ordered List 1.~, 2.~ ) -->
+<ul>
+<li>HOME</li>
+<li>WE ARE</li>
+<li>WORK</li>
+<li>BLOG</li>
+<li>CONTACT US</li>
+</ul>
 <!-- 상단 로고와 햄버거 메뉴영역 끝 -->
 </header>
 <section><!-- division디비전이라는 div 영역표시 태그 -->
 <!-- 메인슬라이드 영역 시작 -->
-슬라이드이미지1
+<!-- 이미지를 불러오는 태그 img -->
+<!-- 경로:상대(./img/...),절대경로(/resource/sample/ime/...) -->
+<!-- 테그안쪽에 지정한 스타일을 인라인스타일 -->
+<div class="slider">
+<img src="/resources/sample/img/xmas.jpg" style="width:100%;" alt="크리스마스 이미지입니다.">
+</div>
 <!-- 메인슬라이드 영역 끝 -->
 </section>
 <footer>
