@@ -10,7 +10,8 @@
 <!-- 폼태그의 필수 속성, name, action-데이터를 전송할 대상값, method-데이터를 전송하는 방법값 -->
 <!-- input 한줄입력 태그, textarea 여러줄입력 태그 -->
 <!-- label은 이름표, 입력태그와 라벨은 1:1매칭이 되는 관계 -->
-<form name="message_form" action="contact.html" method="get">
+<form name="message_form" action="contact.html" method="post">
+<!-- 스프링에서는 action으로 폼데이터를 전송할 위치를 지정할때, contact.html 직접x /contact처럼 컨트롤러를 통해O -->
 <!-- 필드셋은 폼이 DB테이블의 필드와 1:1매칭되는 관계 -->
 <!-- 플레이스홀더:공간에 자리를 차지하지 않으면서 입력힌트를 보여주는 역할 -->
 <fieldset>
@@ -22,6 +23,7 @@
 <input name="phone" id="phone" type="text" placeholder="연락처를 입력">
 <label for="email">이메일</label>
 <input name="email" id="email" type="email" placeholder="email을 입력">
+<!-- 입력 제약조건 html5에서 지원하는 기능 type에 꼭 email라고 형식을 지정해야지만 제약조건 작동이 됨. -->
 </div>
 <div class="textarea-class">
 <label for="message">메세지</label>
