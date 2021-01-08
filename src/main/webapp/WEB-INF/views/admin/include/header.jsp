@@ -1,9 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <!-- 관리자단 헤더 시작 header.jsp -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<script>
+if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
+	alert("${msg} 가(이) 성공하였습니다.");
+}
+</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>관리자 | Dashboard</title>
@@ -52,10 +58,10 @@
   </nav>
   <!-- /.navbar -->
 
-  <!-- 관리자 화면 왼쪽메뉴부분 Main Sidebar Container -->
+  <!-- 관리자화면 왼쪽메뉴부분 Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- 관리자 상단로고 Brand Logo -->
-    <a href="admin" class="brand-link">
+    <a href="/admin" class="brand-link">
       <img src="/resources/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">Spring 프로젝트</span>
     </a>
