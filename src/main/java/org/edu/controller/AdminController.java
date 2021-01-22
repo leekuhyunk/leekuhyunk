@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.edu.dao.IF_BoardDAO;
 import org.edu.service.IF_BoardService;
@@ -86,7 +87,7 @@ public class AdminController {
 		String[] real_file_names = new String[files.size()];
 		int cnt = 0;
 		for(AttachVO file_name:files) {//세로데이터를 가로데이터로 변경하는 로직
-			save_file_names[cnt] = file_name.getSave_file_name();//형변환 cast
+			save_file_names[cnt] = file_name.getSave_file_name();
 			real_file_names[cnt] = file_name.getReal_file_name();
 			cnt = cnt + 1;
 		}
@@ -112,63 +113,61 @@ public class AdminController {
 		//기존 등록된 첨부파일 목록 구하기
 		List<AttachVO> delFiles = boardService.readAttach(boardVO.getBno());
 		//List<HashMap<String,Object>> delFiles_noUse = boardService.readAttach_noUse(boardVO.getBno());
-		//jsp에 보낸 save_file_names, real_file_names 배열변수 초기값 지정
+		//jsp에 보낼 save_file_names, real_file_names 배열변수 초기값 지정
 		String[] save_file_names = new String[files.length];
 		String[] real_file_names = new String[files.length];
-		int index = 0;//ㄱ아래 향상된 for문에서 사용할 인덱스 값
+		int index = 0;//아래 향상된 for문에서 사용할 인덱스값 
 		//첨부파일 수정: 기존첨부파일 삭제 후 신규파일 업로드
 		for(MultipartFile file:files) {//다중파일 업로드 호출 부분 시작 향상된 for문사용
 			if(file.getOriginalFilename() != "") {//첨부파일명이 있으면
-				//기존 파일 DB에서 삭제처리할 변수 생성한 이유:업데이트jsp에서 첨부파일개별삭제시 순서가 필요하기때문				
-				int sun = 0;//업데이트jsp화면에서 첨부파일을 개별 삭제시 사용할 순서가 필요하기때문 변수 추가
+				
+				int sun = 0;//업데이트jsp화면에서 첨부파일을 개별 삭제시 사용할  순서가 필요하기때문 변수 추가
 				//기존파일 폴더에서 실제파일 삭제 처리
 				for(AttachVO file_name:delFiles) {
-					if(index == sun) {//index는 첨부파일개수, sun삭제할 개별순서
+					if(index == sun) {//index는 첨부파일개수 , sun삭제할 개별순서
 						File target = new File(commonController.getUploadPath(), file_name.getSave_file_name());
 						if(target.exists()) {
-							target.delete();//폴더에서 기존첨부파일 지우기	
+							target.delete();//폴더에서 기존첨부파일 지우기
 							//서비스클래스에는 첨부파일DB를 지우는 메서드가 없음. DAO를 접근해서 tbl_attach를 지웁니다.
 							boardDAO.deleteAttach(file_name.getSave_file_name());
 						}
-					}					
-					sun = sun + 1;//개별삭제는  for문에서 딱 1번 뿐이기 때문에
-				}	
+					}
+					sun = sun + 1;//개별삭제는 for문에서 딱 1번 뿐이기 때문에
+				}
 				//신규파일 폴더에 업로드 처리
 				save_file_names[index] = commonController.fileUpload(file);//신규파일 폴더에 업로드
 				real_file_names[index] = file.getOriginalFilename();//신규파일 한글파일명 저장
-			}else {
+			}else{
 				save_file_names[index] = null;//신규파일 폴더에 업로드
 				real_file_names[index] = null;//신규파일 한글파일명 저장
-				//신규파일 폴더에 업로드 처리
-							
 			}
-			index = index + 1;
+			index = index + 1; 
 		}
-		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명	
+		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명
 		boardVO.setReal_file_names(real_file_names);
 		boardService.updateBoard(boardVO);//DB에서 업데이트
 		rdat.addFlashAttribute("msg", "수정");
 		return "redirect:/admin/board/board_view?page="+pageVO.getPage()+"&bno="+boardVO.getBno();
-	} 
+	}
 	
 	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.GET)//URL경로
 	public String board_write() throws Exception {
 		return "admin/board/board_write";//파일경로
 	}
 	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.POST)
-	public String board_write(RedirectAttributes rdat,@RequestParam("file")MultipartFile[] files, BoardVO boardVO) throws Exception {
+	public String board_write(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO) throws Exception {
 		//post받은 boardVO내용을 DB서비스에 입력하면 됩니다.
 		//dB에 입력후 새로고침명령으로 게시물 테러를 당하지 않으려면, redirect로 이동처리 합니다.(아래)
-		String[] save_file_names = new String[files.length];//배열크기가 존재하는 변수 생성
+		String[] save_file_names = new String[files.length];//배열크기가 존재하는 변수 생성 
 		String[] real_file_names = new String[files.length];
 		int index = 0;
 		//첨부파일이 있으면, 첨부파일 업로드처리 후 게시판DB저장+첨부파일DB저장
 		for(MultipartFile file:files) {
 			if(file.getOriginalFilename() != "") {//첨부파일명이 있으면
-				save_file_names[index] = commonController.fileUpload(file);//폴더에 업로드저장완료				
-				real_file_names[index] = file.getOriginalFilename();//"한글파일명.jpg"				
+				save_file_names[index] = commonController.fileUpload(file);//폴더에 업로드저장완료
+				real_file_names[index] = file.getOriginalFilename();//"한글파일명.jpg"
 			}
-			index = index + 1;//배열 인덱스 변수 증가처리
+			index = index + 1;//배열 인덱스 변수값 증가처리.
 		}
 		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명
 		boardVO.setReal_file_names(real_file_names);
@@ -207,19 +206,19 @@ public class AdminController {
 		// ..
 		//]
 		List<AttachVO> files = boardService.readAttach(bno);
-		//List<HashMap<String,Object>> files_noUse = boardService.readAttach_noUse(bno);
+		//List<HashMap<String, Object>> files_noUse = boardService.readAttach_noUse(bno);
 		String[] save_file_names = new String[files.size()];
 		String[] real_file_names = new String[files.size()];
 		int cnt = 0;
 		for(AttachVO file_name:files) {//세로데이터를 가로데이터로 변경하는 로직
-			save_file_names[cnt] = file_name.getSave_file_name();//형변환 cast
+			save_file_names[cnt] = file_name.getSave_file_name();
 			real_file_names[cnt] = file_name.getReal_file_name();
 			cnt = cnt + 1;
 		}
 		/*
-		for(HashMap<String,Object> file_name:files_noUse) {//세로데이터를 가로데이터로 변경하는 로직
-			save_file_names[cnt] = (String) file_name.get("Save_file_name");//형변환 cast
-			real_file_names[cnt] = (String) file_name.get("Real_file_name");
+		for(HashMap<String, Object> file_name:files_noUse) {//세로데이터를 가로데이터로 변경하는 로직
+			save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
+			real_file_names[cnt] = (String) file_name.get("real_file_name");
 			cnt = cnt + 1;
 		}
 		*/
@@ -276,12 +275,12 @@ public class AdminController {
 	
 	//메서드 오버로딩(예, 동영상 로딩중..., 로딩된 매개변수가 다르면, 메서드이름을 중복가능합니다. 대표적인 다형성구현)
 	@RequestMapping(value="/admin/member/member_write",method=RequestMethod.POST)
-	public String member_write(MemberVO memberVO) throws Exception {
+	public String member_write(@Valid MemberVO memberVO) throws Exception {
 		//아래 GET방식의 폼 출력화면에서 데이터 전송받은 내용을 처리하는 바인딩.
-		//POST방식으로 넘어온 user_pw값을 BCryptPasswprdEncoder클래스로 암호화시킴
+		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
 		if(memberVO.getUser_pw() != null) {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw()); 
+			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw());
 			memberVO.setUser_pw(userPwEncoder);
 		}
 		//DB베이스 입력/출력/삭제/수정 처리-다음에...
@@ -303,11 +302,12 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/admin/member/member_update",method=RequestMethod.POST)
-	public String member_update(PageVO pageVO, MemberVO memberVO) throws Exception {
-		//POST방식으로 넘어온 user_pw값을 BCryptPasswprdEncoder클래스로 암호화시킴
-		if(memberVO.getUser_pw() != null) {
+	public String member_update(PageVO pageVO,@Valid MemberVO memberVO) throws Exception {
+		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
+		if(memberVO.getUser_pw() == null || memberVO.getUser_pw() == "") {
+		} else {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw()); 
+			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw());
 			memberVO.setUser_pw(userPwEncoder);
 		}
 		//POST방식으로 넘어온 값을 DB수정처리하는 역할
