@@ -67,14 +67,18 @@ $(document).ready(function() {
 	//alert(current);//admin(대시보드),admin/member_list(관리자관리),
 	//admin/board_list(게시물관리)
 	//active클래스명을 동적으로 추가할 영역은 nav-item 안쪽의 a 태그의 클래스명을 추가하면 됨.
-	$(".nav-treeview li a").each(function(){		
-		if( $(this).attr('href').indexOf(current_2) != -1) { 
+	$(".nav-treeview li a").each(function() {
+		if( $(this).attr('href').indexOf(current_2) != -1)	{
 			//위 문제를 처리하는 대체 함수 indexOf사용
-			$(this).addClass("active");//선택한 메뉴의 배경색상을 흰색으로 보이게 추가하는 처리.
+			if(current_2 != 'board'){
+				$(this).addClass("active");//선택한 메뉴의 배경색상을 흰색으로 보이게 추가하는 처리.
+			}
 		} else {
-			$(this).removeClass("active");//선택하지 않은 메뉴의 배경색상 흰색을 제거하는 처리.			
+			if(current_2 != 'board'){
+				$(this).removeClass("active");//선택하지 않은 메뉴의 배경색상 흰색을 제거하는 처리.
+			}
 		}
-	});		
+	});
 });
 /*
 each함수로 a태그를 찾는 명령. 결과는 2개이기 떄문에 2번반복

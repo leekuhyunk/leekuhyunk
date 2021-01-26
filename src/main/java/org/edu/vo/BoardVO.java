@@ -2,14 +2,18 @@ package org.edu.vo;
 
 import java.util.Date;
 
+import org.springframework.web.bind.annotation.SessionAttributes;
+
 /**
  * 게시판에서 사용되는 데이터 입출력 클래스
  * @author 이규혁
  *
  */
+@SessionAttributes("session_board_type")
 public class BoardVO {
 	//멤버변수 선언
 	private Integer bno;//int은 입력갑싱 null일때 에러나기 때문에, Interger로 변경
+	private String board_type;//게시판 종류:게시판ID
 	private String title;
 	private String content;
 	private String writer;
@@ -18,6 +22,10 @@ public class BoardVO {
 	private Integer view_count;
 	private Integer reply_count;
 	
+	public String getVBoard_type() {
+		//this.board_type = "gallery";
+		return board_type;
+	}
 	private String[] save_file_names;//폴더에 저장되는 첨부파일명을 배열형으로 변경할때 사용한 변수.
 	private String[] real_file_names;//DB에 저장되는 한글파일명을 배열형으로 변경할때 사용한 변수.
 	
@@ -86,5 +94,11 @@ public class BoardVO {
 	}
 	public void setReal_file_names(String[] real_file_names) {
 		this.real_file_names = real_file_names;
+	}
+	public String getBoard_type() {
+		return board_type;
+	}
+	public void setBoard_type(String board_type) {
+		this.board_type = board_type;
 	}
 }	
