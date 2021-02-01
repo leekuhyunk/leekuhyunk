@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,14 +36,14 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * 제이유닛4클래스를 사용.
  * 단위테스트는 톰캣이 실행되지 않아도 작동이 되야 합니다.
  * 그래서, 테스트 클래스 상단에 servelet-context.xml 이러한 설정파일을 불러들여서 실행이 가능
- * @author 이규혁
+ * @author 김일국
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-//@PropertySource("classpath:properties/local.properties")//현재클래스에서 전역변수사용시 필요
+//@PropertySource("classpath:properties/local.properties")//현재클래스에서 전역변수사용시 필요 
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring/**/*.xml"})
 @WebAppConfiguration
-public class DateSourceTest {
+public class DataSourceTest {
 
 	@Inject
 	DataSource dataSource;//자바에서처럼 new 오브젝트를 생성하지 않고, 스프링에서는 @Inject로 오브젝트 생성.
@@ -80,8 +81,8 @@ public class DateSourceTest {
 		//MemberVO memberVO = new MemberVO();
 		memberVO.setUser_id("dummy_1");
 		memberVO.setUser_name("홍길동");
-		memberVO.setUser_pw("");//이 셋을  적용하면, memberVO.getUser_pw();
-		//memberVO.serUser_pw("");//이 셋을 주석으로 적용하면, 아예보내지 않음 null값 memberVO.getUser_pw();
+		memberVO.setUser_pw("");//이 셋을 적용하면, 공백값 memberVO.getUser_pw() == ""
+		//memberVO.setUser_pw("");//이 셋을 주석으로 적용하면, 아예보내지 않음 null값 memberVO.getUser_pw() == null
 		memberVO.setEmail("test@test.com");
 		memberVO.setPoint(100);
 		memberVO.setEnabled(true);
@@ -108,11 +109,20 @@ public class DateSourceTest {
 	@Test
 	public void insertBoard() throws Exception {
 		BoardVO boardVO = new BoardVO();
+		boardVO.setBoard_type("gallery");
 		boardVO.setTitle("더미게시물");
 		boardVO.setContent("더미 내용 입니다.");
 		boardVO.setWriter("일반사용자");
+		
 		//boardVO.setBno(프라이머리키);
-		for(int cnt=0;cnt<=100;cnt++) {//더미게시물 100입력
+		for(int cnt=0;cnt<=0;cnt++) {//더미게시물 100입력
+			Date reg_date = new Date();
+			Calendar cal = Calendar.getInstance();//+
+			cal.setTime(reg_date);//+
+			cal.add(Calendar.SECOND, cnt);//+ cnt초 더하기
+			//???????????????????????????????????????????
+			boardVO.setReg_date(cal.getTime());//이부분이 작동을 하지 않아서 문제
+			//???????????????????????????????????????????
 			boardDAO.insertBoard(boardVO);
 		}
 	}
@@ -133,10 +143,16 @@ public class DateSourceTest {
 		memberVO.setPoint(100);
 		memberVO.setEnabled(true);
 		memberVO.setLevels("ROLE_USER");
-		Date reg_date = new Date();
-		memberVO.setReg_date(reg_date);//매퍼쿼리에서 처리로 대체
-		for(int cnt=0;cnt<=100;cnt++) {//더미사용자 100명 입력
+		
+		for(int cnt=0;cnt<=0;cnt++) {//더미사용자 100명 입력
 			memberVO.setUser_id(memberPrimaryKey());
+			Date reg_date = new Date();
+			Calendar cal = Calendar.getInstance();//+
+			cal.setTime(reg_date);//+
+			cal.add(Calendar.SECOND, cnt);//+ cnt초 더하기
+			//???????????????????????????????????????????
+			memberVO.setReg_date(cal.getTime());//이부분이 작동을 하지 않아서 문제
+			//???????????????????????????????????????????
 			memberDAO.insertMember(memberVO);
 		}		
 	}
@@ -145,8 +161,8 @@ public class DateSourceTest {
 	public void selectMember() throws Exception {
 		//"user_name","홍길동"
 		PageVO pageVO = new PageVO();
-		pageVO.setSearch_type("user_name");
-		pageVO.setSearch_keyword("홍길동");
+		pageVO.setSearch_type("user_id");
+		pageVO.setSearch_keyword("admin");
 		//아래3개줄은 초기 페이징처리에 필요한 필수값 저장
 		pageVO.setPage(1);
 		pageVO.setPerPageNum(5);//리스트하단에 보이는 페이징번호의 개수
@@ -160,21 +176,21 @@ public class DateSourceTest {
 	public void oldQueryTest() throws Exception {
 		//Connection connection = dataSource.getConnection();//root-context사용
 		Connection connection = null;
-		connection = DriverManager.getConnection("jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db","sa","");
+		connection = DriverManager.getConnection("jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false","sa","");
 		/* mysql(마리아DB)
 		 * .getConnection("jdbc:log4jdbc:mysql://127.0.0.1:3306/edu","root","apmsetup");
 		 */
 		//직접 쿼리를 날립니다.(아래)
-		Statement stmt = connection.createStatement();		
+		Statement stmt = connection.createStatement();
 		/* 인서트 쿼리실행(아래) 
 		for(int cnt=0;cnt<=100;cnt++) { //고전 방식으로 더미 데이터 입력하기(아래)
 		stmt.executeQuery("INSERT INTO tbl_board VALUES("
-				+"(select count(*) from tbl board)+1"
-				+",'강제 수정된 글입니다.', '수정 테스트', 'user00', now(),now(), 0,0)");
+				+ "(select count(*) from tbl_board)+1"
+				+ ",'강제 수정된 글입니다.', '수정 테스트 ', 'user00', now(),now(), 0, 0)");
 		}
-		*/						
-		/*셀렉트 쿼리 (아래) */
-		ResultSet rs = stmt.executeQuery("select * from tbl_board");		
+		*/
+		/* 셀렉트 쿼리실행(아래) */
+		ResultSet rs = stmt.executeQuery("select * from tbl_board");
 		System.out.println("번호\t\t제목\t\t내용\t\t작성자");
 		while(rs.next()) {
 			System.out.print(rs.getString("bno"));
@@ -182,7 +198,7 @@ public class DateSourceTest {
 			System.out.print(rs.getString("content"));
 			System.out.print(rs.getString("writer"));
 			System.out.println();
-		}		
+		}
 		if(rs !=null)rs.close();
 		if(stmt !=null)stmt.close();
 		if(connection !=null)connection.close();
