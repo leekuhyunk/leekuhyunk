@@ -10,7 +10,7 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
 	alert("${msg} 가(이) 성공하였습니다.");
 }
 if('${msg_fail}' != ''){
-	alert("${msg_fail} 가(이) 실패하였습니다.");
+	alert("${msg_fail} 가(이) 실패햐였습니다.");
 }
 </script>
   <meta charset="utf-8">
@@ -74,7 +74,8 @@ if('${msg_fail}' != ''){
       <!-- 로그인한 사용자표시 Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="/resources/dist/img/default-150x150.png" class="img-circle elevation-2" alt="User Image">
+          <!-- <img src="/resources/dist/img/default-150x150.png" class="img-circle elevation-2" alt="User Image"> -->
+          <img style="width:40px;height:40px;" src="/resources/profile/${session_userid}.jpg" class="img-circle elevation-2" alt="사용자프로필"/>
         </div>
         <div class="info">
           <a href="#" class="d-block">${session_username}</a>
@@ -140,14 +141,14 @@ if('${msg_fail}' != ''){
                   </p>
                 </a>
                 <ul class="nav nav-treeview" style="display: block;">
-                <c:forEach items="${board_type_list}" var="boardTypeVO">                               
+                <c:forEach items="${board_type_list}" var="boardTypeVO">
                   <li class="nav-item">
                     <a href="/admin/board/board_list?board_type=${boardTypeVO.board_type}" class="nav-link <c:out value='${(session_board_type eq boardTypeVO.board_type)?"active":""}' /> ">
                       <i class="far fa-dot-circle nav-icon"></i>
                       <p>${boardTypeVO.board_name}</p>
                     </a>
                   </li>
-                  </c:forEach>
+                 </c:forEach>
                 </ul>
               </li>
               <!-- 여기까지 붙여넣기 끝 -->

@@ -59,12 +59,6 @@ public class MemberServiceImpl implements IF_MemberService {
 	}
 
 	@Override
-	public void herokuJobmethod() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void herokuJobMethod() throws Exception {
 		// 월-금 오전8시부터 오후 11시 (미국시간 23,0-14) 헤로쿠앱에 20분간격으로 URL접근
 		String urlStr = "https://leekuhyunk2.herokuapp.com";//본인앱주소

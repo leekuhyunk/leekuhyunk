@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,14 +75,15 @@ public class AdminController {
 		}
 		return "redirect:/admin/bbs_type/bbs_type_list";
 	}
-	//게시판생성관리 등록매칭(POST)
+	//게시판생성관리 등록매핑(POST)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_write",method=RequestMethod.POST)
-	public String bbs_type_write(BoardTypeVO boardTypeVO, RedirectAttributes rdat) throws Exception{
-		//메서드명이 같고, 로드된 매개변수가 틀린방식을 오버로드 
+	public String bbs_type_wrtie(BoardTypeVO boardTypeVO, RedirectAttributes rdat) throws Exception {
+		//메서드명이 같고, 로드된 매개변수가 틀린방식을 오버로드
 		boardTypeService.insert_board_type(boardTypeVO);
 		rdat.addFlashAttribute("msg", "등록");
 		return "redirect:/admin/bbs_type/bbs_type_list";
 	}
+	
 	//게시판생성관리 등록매핑(GET)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_write",method=RequestMethod.GET)
 	public String bbs_type_write() throws Exception {
@@ -90,14 +93,14 @@ public class AdminController {
 	
 	//게시판생성관리 수정매핑(POST)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_update",method=RequestMethod.POST)
-	public String bbs_type_update(BoardTypeVO boardTypeVO,RedirectAttributes rdat) throws Exception{
+	public String bbs_type_update(BoardTypeVO boardTypeVO,RedirectAttributes rdat) throws Exception {
 		boardTypeService.update_board_type(boardTypeVO);
 		rdat.addFlashAttribute("msg", "수정");
-		return "redirect:/admin/bbs_type/bbs_type_list?board_type=" + boardTypeVO.getBoard_type();
+		return "redirect:/admin/bbs_type/bbs_type_update?board_type=" + boardTypeVO.getBoard_type();
 	}
 	//게시판생성관리 수정매핑(Get)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_update",method=RequestMethod.GET)
-	public String bbs_type_update(@RequestParam("board_type") String board_type,Model model) throws Exception{
+	public String bbs_type_update(@RequestParam("board_type") String board_type,Model model) throws Exception {
 		
 		BoardTypeVO boardTypeVO = boardTypeService.view_board_type(board_type);
 		model.addAttribute("boardTypeVO", boardTypeVO);
@@ -105,8 +108,8 @@ public class AdminController {
 	}
 	//게시판생성관리 리스트 매핑
 	@RequestMapping(value="/admin/bbs_type/bbs_type_list",method=RequestMethod.GET)
-	public String bbs_type_list() throws Exception {	
-		//여기는 model을 이용해서 jsp로 오브젝트 board_type_list오브젝트를 보낼필요X, ControllerAdvice클래스에서 만들었기 때문에
+	public String bbs_type_list() throws Exception {
+		//여기는 model을 이용해서 jsp로 board_type_list오브젝트를 보낼필요X, ControllAdvice클래스에서 만들었기 때문에...
 		return "admin/bbs_type/bbs_type_list";
 	}
 	//GET은 URL전송방식(아무데서나 브라우저주소에 적으면 실행됨), POST는 폼전송방식(해당페이지에서만 작동가능)
@@ -297,18 +300,19 @@ public class AdminController {
 	@RequestMapping(value="/admin/board/board_list",method=RequestMethod.GET)
 	public String board_list(@ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception {
 		//게시판 타입을 세션변수로 저장(아래)
-		/*
-		HttpServletRequest request, @RequestParam(value="board_type",required=false) String board_type
+		/* AOP기능으로 대체(아래)
+		HttpServletRequest request, @RequestParam(value="board_type",required=false) String board_type,
 		HttpSession session = request.getSession();
 		if(board_type != null) {
 			session.setAttribute("session_board_type", board_type);
 		}
-		//PageVO화 BoardVO에서 세션변수로 get/set 하기 때문에 
+		//PageVO와 BoardVO에서 세션변수로 get/set 하기 때문에 
 		if(session.getAttribute("session_board_type") != null ) {
 			board_type = (String) session.getAttribute("session_board_type");
 			pageVO.setBoard_type(board_type);//다중게시판 쿼리때문에 추가
 		}
 		*/
+		
 		//테스트용 더미 게시판 데이터 만들기(아래)
 		/*
 		 * BoardVO input_board = new BoardVO(); input_board.setBno(1);
@@ -349,7 +353,11 @@ public class AdminController {
 	
 	//메서드 오버로딩(예, 동영상 로딩중..., 로딩된 매개변수가 다르면, 메서드이름을 중복가능합니다. 대표적인 다형성구현)
 	@RequestMapping(value="/admin/member/member_write",method=RequestMethod.POST)
-	public String member_write(@Valid MemberVO memberVO) throws Exception {
+	public String member_write(HttpServletRequest request,MultipartFile file,@Valid MemberVO memberVO) throws Exception {
+		//프로필 첨부파일 메서드 호출
+		if(file.getOriginalFilename() != null) {
+			commonController.profile_upload(memberVO.getUser_id(), request, file);
+		}
 		//아래 GET방식의 폼 출력화면에서 데이터 전송받은 내용을 처리하는 바인딩.
 		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
 		if(memberVO.getUser_pw() != null) {
@@ -374,11 +382,16 @@ public class AdminController {
 		model.addAttribute("memberVO", memberVO);
 		return "admin/member/member_update";
 	}
-	
+	//첨부파일처리는 MultipartFile(첨부파일 태그name 1개일때) , MultipartServletRequest(첨부파일 태그name이 여러개일때) 
 	@RequestMapping(value="/admin/member/member_update",method=RequestMethod.POST)
-	public String member_update(PageVO pageVO,@Valid MemberVO memberVO) throws Exception {
+	public String member_update(HttpServletRequest request,MultipartFile file,PageVO pageVO,@Valid MemberVO memberVO) throws Exception {
+		//프로필 첨부파일 처리
+		if(file.getOriginalFilename() != null) {
+			commonController.profile_upload(memberVO.getUser_id(), request, file);
+		}
 		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
-		if(memberVO.getUser_pw() == null || memberVO.getUser_pw() == "") {
+		//if(memberVO.getUser_pw() == null || memberVO.getUser_pw() == "") {
+		if(memberVO.getUser_pw().isEmpty()) {
 		} else {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw());
@@ -473,8 +486,29 @@ public class AdminController {
 	
 	//bind:묶는다는 의미, /admin 요청URL경로와 admin/home.jsp를 묶는다는 의미.
 	@RequestMapping(value="/admin",method=RequestMethod.GET)
-	public String admin() throws Exception {
+	public String admin(Model model) throws Exception {
+		//대시보드 만들기 1번 방법: ModelMap<key:objcet>값을 만들어서 보내기
+		PageVO pageVO = new PageVO();
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);
+		pageVO.setQueryPerPageNum(4);
+		List<MemberVO> latest_member = memberService.selectMember(pageVO);
+		model.addAttribute("latest_member", latest_member);
+
 		return "admin/home";//상대경로 파일위치
+	}
+	//관리자단 대시보드에 나타낼 다중게시판 최근게시물 출력하는 바인딩
+	@RequestMapping(value="/admin/latest/latest_board",method=RequestMethod.GET)
+	public String latest_board(@RequestParam("board_type") String board_type,Model model) throws Exception {
+		PageVO pageVO = new PageVO();
+		pageVO.setBoard_type(board_type);//jsp > import jstl로 ?~쿼리스트링으로 받은 변수값
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);
+		pageVO.setQueryPerPageNum(5);
+		List<BoardVO> latest_list = boardService.selectBoard(pageVO);
+		model.addAttribute("latest_list", latest_list);
+		
+		return "admin/latest/latest_board";
 	}
 	
 }
