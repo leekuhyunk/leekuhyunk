@@ -59,14 +59,14 @@ $(document).ready(function(){
 	//1대메뉴1-gnb_depth2_1 서브메뉴 마우스 오버액션
 	$('.openAll1').mouseover(function(){
 		//pc용에서만 액션이 가능하도록 가로크기 비교(아래)
-		if(parseInt($('header').css('width')) > 1055) {
+		if(parseInt($('header').css('width')) > 818) {
 			$('.gnb_depth2_1').fadeIn('fast');
 		}
 		isOver1 = true;
 	});
 	//2대메뉴1-gnb_depth2_1 서브메뉴 선택액션
 	$('.openAll1').focus(function(){
-		if(parseInt($('header').css('width')) > 1055) {
+		if(parseInt($('header').css('width')) > 818) {
 			$('.gnb_depth2_1').fadeIn('fast');
 		}
 		isOver1 = true;
