@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 /**
  * 회원관리 DAO 메서드 명세(목차) 인터페이스.
- * @author 김일국
+ * @author 이규혁
  *
  */
 public interface IF_MemberDAO {
