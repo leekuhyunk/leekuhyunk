@@ -3,7 +3,7 @@
 /* 공통영역 */
 body {
 	font-family: 'Nanum Gothic', '나눔 고딕', sans-serif !important;
-	font-size:16px !important; 
+	font-size:16px !important;
 	letter-spacing: -1px !important;
 	color: #444 !important;
 	word-wrap: break-word !important;
@@ -62,7 +62,7 @@ header {
 	display: inline-block;
 	width: 150px;
 	height: 80px;
-	background: url(../img/pg.png) no-repeat;
+	background: url(../img/top_logo.png) no-repeat;
 	background-size: 50px 60px !important;
 	background-position: center center !important;
 	text-indent: -9999px;
@@ -101,6 +101,7 @@ header {
 	width: 100%;
 	background: #31353d;
 	display: none;
+	margin-top:36px;
 }
 .closePop {
 	display: block;

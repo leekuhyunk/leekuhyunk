@@ -29,6 +29,7 @@
     width: 60%;
     padding-right: 20px;
     background: none;
+    margin-top:0px;
   }
   .closePop {
     display: none;
@@ -84,7 +85,7 @@
   }
   /* //상단로고와 메뉴스타일 */
   
-  /* PC영역:태블릿영역에서 2차메뉴가 나오지 않아서  PC영역것을 복사*/
+  /* PC영역:테블릿영역에서 2차메뉴가 나오지 않어서 PC영역것을 복사 붙여넣습니다. */
   /* 상단 로고,메뉴영역 */
   .header_area h1 {
     padding-left: 0px;
@@ -94,7 +95,7 @@
     padding-right: 10px;
   }
   .gnb li a {
-    padding: 26px 20px;
+    padding: 26px 40px;
   }
   .gnb_depth {
     position: absolute;
@@ -124,6 +125,7 @@
     text-align: left;
   }
   /* //상단 로고,메뉴영역 */
+
   /* 컨테이너영역 */
   #container {
     padding-bottom: 20px;

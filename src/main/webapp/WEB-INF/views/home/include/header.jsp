@@ -30,7 +30,6 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
 </head>
 <body>
 
-
 <!-- 헤더에서푸터까지 -->
 <div id="wrap">
 	<!-- 헤더상단메뉴영역영역 -->
@@ -49,34 +48,34 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
 						<!-- 로그인 후 보이는 메뉴(아래) -->
 						<li><a href="#">${session_username} 님 환영합니다.</a></li>
 						<c:if test="${session_type eq 'normal'}">
-						<li><a href="/member/mypage">마이페이지</a></li>
+							<li><a href="/member/mypage">마이페이지</a></li>
 						</c:if>
 						<li><a href="/logout">로그아웃</a>
 						<c:if test="${session_levels eq 'ROLE_ADMIN'}">
-						<li><a href="/admin">AdminLTE</a></li>
+							<li><a href="/admin">AdminLTE</a></li>
 						</c:if>
 					</c:when>
 					<c:otherwise>
 						<li><a href="/login">로그인</a></li>
 						<li><a href="/join">회원가입</a></li>
 					</c:otherwise>
-				</c:choose>															
+				</c:choose>
 				</ul>	
 				<nav>
 				<ul class="gnb clear">
 					<li><a href="/sample" class="openAll1">샘플홈페이지</a>
 
                         <div class="gnb_depth gnb_depth2_1">
-                            <ul class="submenu_list">                            
+                            <ul class="submenu_list">
                                 <li><a href="/sample">반응형홈페이지</a></li>
                             </ul>
                         </div>
 					</li>
-					<li><a href="/sample" class="openAll1">RestAPI서비스</a>
+					<li><a href="/resources/chart/start.html" class="openAll2">RestAPI서비스</a>
 
                         <div class="gnb_depth gnb_depth2_2">
                             <ul class="submenu_list">
-                                <li><a href="/resources/chart/start.html">챠트실시간렌더링(소켓통신)</a></li>
+                                <li><a href="/resources/chart/start.html">차트실시간렌더링(소켓통신)</a></li>
                             </ul>
                         </div>
 					</li>
@@ -86,11 +85,11 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
 						<c:set var="first_board_type" value="${boardTypeVO.board_type}" />
 						</c:if>
 					</c:forEach>
-					<li><a href="/home/board/board_list?board_type=${first_board_type}" class="openAll2">커뮤니티</a>
+					<li><a href="/home/board/board_list?board_type=${first_board_type}" class="openAll3">커뮤니티</a>
 				        <div class="gnb_depth gnb_depth2_3">
                             <ul class="submenu_list">
                             <c:forEach items="${board_type_list}" var="boardTypeVO">
-                               <li><a href="/home/board/board_list?board_type=${boardTypeVO.board_type}">${boardTypeVO.board_name}</a></li>
+                            	<li><a href="/home/board/board_list?board_type=${boardTypeVO.board_type}">${boardTypeVO.board_name}</a></li>
                             </c:forEach>
                             </ul>
                         </div>
